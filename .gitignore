@@ -1,0 +1,5 @@
+#ignore data files
+nfl.db
+NFL_PlaybyPlay.csv
+*.pyc
+.DS_Store
