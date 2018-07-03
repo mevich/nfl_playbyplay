@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <style type="text/css">
+    	.footballfield {
+    		margin: 25px auto;
+    		width: 1200px;
+    		height: 450px;
+    		background: url('/static/images/footballfield.png');
+    		background-size: 1200px 450px;
+			  position: relative;
+			  margin-left: auto;
+			  margin-right: auto;
+			  left: 0;
+			  right: 0;
+    	}
+    	#football_pos {
+    		position: absolute;
+    		top: 215px;
+    		left: 437px;
+    	}
+    	#endzone_logo1 {
+    		position: absolute;
+    		top: 198px;
+    		left: 4px;
+    		transform: rotate(-90deg);
+    	}
+    	#endzone_logo2 {
+    		position: absolute;
+    		top: 200px;
+    		left: 1100px;
+    		transform: rotate(90deg);
+    	}
+    	#first_down_line {
+		    border-left: 4px solid yellow;
+		    height: 450px;
+		    left: 550px;
+    		top: 0px;
+    		position: absolute;
+		}
+    #play_description {
+      position: relative;
+      top: 650px;
+      text-align: center;
+    }
+    #game_state{
+      position: relative;
+      text-align: center;
+      top: 475px;
+    }
+    
+    .time_left {
+      margin-left: 20px;
+    }
+    #loading {
+      position: relative;
+      top: 200px;
+      font-size: 4em;
+      color: white;
+      text-align: center;
+    }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+   	<div class="footballfield">
+   		<img id="football_pos" class="football_pos" src="/static/images/football.png" />
+   		<img id="endzone_logo1" src="/static/images/patslogo.png" width="100" height="50" />
+   		<img id="endzone_logo2" src="/static/images/steelerslogo.png" width="100" height="50" />
+   		<div id="first_down_line"></div>
+      <div id="play_description"></div>
+      <div id="loading">Loading..</div>
+      <div id="game_state">
+        <p>qtr <span class="quarter_number"></span><span class="time_left"></span></p>
+        <p><span class="current_down"></span> down and <span class="yards_to_go"></span> yards to go. Ball on <span class="side_of_field"></span> <span class="yard_line"></span></p>
+        <p><span class="team1"></span> <span class="team1_score"></span> <span class="team2"></span> <span class="team2_score"></span></p>
+      </div>
+      <input type="hidden" id="game_data_url" value="/game/{{ gameid }}">
+   	</div>
+{% endblock %}

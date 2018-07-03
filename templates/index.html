@@ -1,73 +1,9 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Football</title>
-    <style type="text/css">
-    	.footballfield {
-    		margin: 0 auto;
-    		width: 1200px;
-    		height: 450px;
-    		background: url('/static/images/footballfield.png');
-    		background-size: 1200px 450px;
-			position: relative;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-    	}
-    	#football_pos {
-    		position: absolute;
-    		top: 215px;
-    		left: 437px;
-    	}
-    	#endzone_logo1 {
-    		position: absolute;
-    		top: 198px;
-    		left: 4px;
-    		transform: rotate(-90deg);
-    	}
-    	#endzone_logo2 {
-    		position: absolute;
-    		top: 200px;
-    		left: 1100px;
-    		transform: rotate(90deg);
-    	}
-    	#first_down_line {
-		    border-left: 4px solid yellow;
-		    height: 450px;
-		    left: 550px;
-    		top: 0px;
-    		position: absolute;
-		}
-    #play_description {
-      position: relative;
-      top: 475px;
-      text-align: center;
-    }
-    </style>
-   </head>
-   <body>
-   	<div class="footballfield">
-   		<img id="football_pos" class="football_pos" src="/static/images/football.png" />
-   		<img id="endzone_logo1" src="/static/images/patslogo.png" width="100" height="50" />
-   		<img id="endzone_logo2" src="/static/images/steelerslogo.png" width="100" height="50" />
-   		<div id="first_down_line"></div>
-      <div id="play_description"></div>
-   	</div>
-   </body>
-   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-   <script src="/static/js/base.js"></script>
+{% extends "base.html" %}
 
-</html>	
-
-
-
-
-
-
-
-
-
-
-
+{% block content %}
+	<ul>
+		{% for season in seasons %}
+		<li><a href="/{{ season['season'] }}">{{ season["season"] }}</a></li>
+		{% endfor %}
+	</ul>
+{% endblock %}

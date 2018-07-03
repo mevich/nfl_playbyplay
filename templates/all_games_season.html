@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h2>Season: {{ season }}</h2>
+	<ul>
+		{% for game in all_games %}
+		<li><a href="/game/{{ game.gameid }}/playbyplay">{{ game.hometeam }} v {{ game.awayteam }}</a></li>
+		{% endfor %}
+	</ul>
+{% endblock %}
