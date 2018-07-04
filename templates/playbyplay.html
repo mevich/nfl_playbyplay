@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block css %}
     <style type="text/css">
     	.footballfield {
@@ -40,7 +41,7 @@
 		}
     #play_description {
       position: relative;
-      top: 650px;
+      top: 700px;
       text-align: center;
     }
     #game_state{
@@ -59,6 +60,18 @@
       color: white;
       text-align: center;
     }
+    #gameover {
+      position: relative;
+      top: 175px;
+      font-size: 4em;
+      color: white;
+      text-align: center;
+    }
+    .team_logo {
+      width: 50px;
+      height: 50px;
+    }
+
     </style>
 {% endblock %}
 
@@ -66,16 +79,24 @@
 {% block content %}
    	<div class="footballfield">
    		<img id="football_pos" class="football_pos" src="/static/images/football.png" />
-   		<img id="endzone_logo1" src="/static/images/patslogo.png" width="100" height="50" />
-   		<img id="endzone_logo2" src="/static/images/steelerslogo.png" width="100" height="50" />
+   		<img id="endzone_logo1" src="/static/images/teamlogos/{{hometeam}}.png" width="100" height="50" />
+   		<img id="endzone_logo2" src="/static/images/teamlogos/{{awayteam}}.png" width="100" height="50" />
    		<div id="first_down_line"></div>
       <div id="play_description"></div>
       <div id="loading">Loading..</div>
+      <div id="gameover">GAMEOVER</div>
       <div id="game_state">
         <p>qtr <span class="quarter_number"></span><span class="time_left"></span></p>
         <p><span class="current_down"></span> down and <span class="yards_to_go"></span> yards to go. Ball on <span class="side_of_field"></span> <span class="yard_line"></span></p>
-        <p><span class="team1"></span> <span class="team1_score"></span> <span class="team2"></span> <span class="team2_score"></span></p>
+        <p>
+          <img  class="team_logo" src="/static/images/teamlogos/{{hometeam}}.png">
+          <span class="team1"></span>
+          <span class="team1_score"></span>
+          <span class="team2_score"></span>
+          <span class="team2"></span> 
+          <img  class="team_logo" src="/static/images/teamlogos/{{awayteam}}.png">
+        </p>
       </div>
-      <input type="hidden" id="game_data_url" value="/game/{{ gameid }}">
+      <input type="hidden" id="game_data_url" value="/{{ season }}/{{ gameid }}">
    	</div>
 {% endblock %}

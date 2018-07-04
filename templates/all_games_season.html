@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
+{% block title %}
+NFL game for Season {{ season }}
+{% endblock %}
+
 {% block content %}
 	<h2>Season: {{ season }}</h2>
 	<ul>
 		{% for game in all_games %}
-		<li><a href="/game/{{ game.gameid }}/playbyplay">{{ game.hometeam }} v {{ game.awayteam }}</a></li>
+		<li><a href="/{{ game.season }}/{{ game.gameid }}/playbyplay">{{ game.hometeam }} v {{ game.awayteam }}</a></li>
 		{% endfor %}
 	</ul>
 {% endblock %}

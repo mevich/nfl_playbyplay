@@ -28,20 +28,22 @@ def get_all_seasons():
 
 @app.route("/<int:season>")
 def get_all_games_in_season(season):
-    query_object = Nflpbp.select(Nflpbp.gameid,Nflpbp.game_date,Nflpbp.hometeam,Nflpbp.awayteam).distinct().where(Nflpbp.season==season).dicts()
+    query_object = Nflpbp.select(Nflpbp.gameid,Nflpbp.season,Nflpbp.game_date,Nflpbp.hometeam,Nflpbp.awayteam).distinct().where(Nflpbp.season==season).dicts()
     all_games = [x for x in query_object]
     return render_template('all_games_season.html', all_games=all_games, season=season)
 
-@app.route('/game/<game_id>/playbyplay')
-def get_index(game_id):
-    return render_template('playbyplay.html', gameid=game_id)
+@app.route('/<season>/<game_id>/playbyplay')
+def get_index(season, game_id):
+    query_object = Nflpbp.select(Nflpbp.season,Nflpbp.hometeam,Nflpbp.awayteam).distinct().where(Nflpbp.gameid==game_id).first()
+    return render_template('playbyplay.html', hometeam = query_object.hometeam,
+        awayteam=query_object.awayteam, gameid=game_id, season=season)
 
 
-@app.route('/game/<game_id>', methods=['GET'])
-def get_game_data(game_id):
+@app.route('/<season>/<game_id>', methods=['GET'])
+def get_game_data(season, game_id):
     #query_object = Nflpbp.select(Nflpbp.gameid,Nflpbp.qtr,Nflpbp.timesecs,Nflpbp.playtype,Nflpbp.desc,Nflpbp.yards_gained,Nflpbp.yrdln,Nflpbp.ydstogo,Nflpbp.yrdline100,Nflpbp.awayteam).where(Nflpbp.gameid==game_id).dicts()
     #all_data = [x for x in query_object]
-    query_object = Nflpbp.select().where(Nflpbp.gameid==game_id)
+    query_object = Nflpbp.select().where(Nflpbp.season==season, Nflpbp.gameid==game_id)
     all_data = [x.to_dict() for x in query_object]
     
     data = {}
