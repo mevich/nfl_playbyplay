@@ -1,0 +1,5 @@
+Flask==1.0.2
+peewee==3.5.2
+redis==2.10.6
+celery==4.2.0
+enum34

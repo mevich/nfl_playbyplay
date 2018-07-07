@@ -1,0 +1,80 @@
+/<gameid>/
+{1 :  [{}, {play}],
+2: [], 3: [], 4: []}
+
+
+
+input - gameid as url variable. Use flask to display the data
+output - a dictionary with quarter num as key fields and a list of json describing the play with all the key parameters as the value
+
+Mistakes:
+Class and Method naming conventions - Class and Method names should be as distinct as possible
+app = Flask(__name__) -- this gives the application name and the file has to match the same as well. when you run the .py file, the webserver is launched
+
+
+
+
+Input
+Output
+State Management
+
+
+Rushing Touchdowns
+	Team
+	Rusher
+	Rusher ID
+	yards
+Passing Touchdowns
+	Team
+	Passer
+	Passer ID
+	Receiver
+	Receiver ID
+	Passing Yards
+	Receiving Yards
+Special Teams Touchdowns
+	Team
+	Returner
+	yards
+
+
+Rusher
+	Rusher
+	Rusher ID
+	Team
+	Total Num of TD
+	Longest TD Run
+Passer
+	Passer
+	Passer ID
+	Team
+	Total Num of TD
+	Longest TD Pass
+Receiver
+	Receiver
+	Receiver ID
+	Team
+	Total Num of TD
+	Longest TD Catch
+
+Always install through the requirements file. Don't use pip install. --user for installing to the current user. sudo is for installing globally for all users.
+pip install -r requirements.txt --user
+
+Jinja templating language is installed along with Flask. All the html is actually written in Jinja.
+
+Ajax request will re-run the flask view and render the template for which request.is_xhr is set to true
+
+
+Celery and Redis:
+
+Celery is a process scheduling tool that can be used to offload time consuming tasks to a scheduling queue so that they can be run asynchronously.
+Celery workers are python processes that run the background(async) jobs
+The Celery client communicates with the workers through a message queue
+
+Redis works as both a cache and also a message broker 
+
+
+method names always start with what the method is actually doing
+
+
+
