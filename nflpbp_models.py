@@ -96,7 +96,7 @@ class Nflpbp(BaseModel):
     wpa = TextField(column_name='WPA', null=True)
     win_prob = TextField(column_name='Win_Prob', null=True)
     yardsaftercatch = TextField(column_name='YardsAfterCatch', null=True)
-    yards_gained = TextField(column_name='Yards_Gained', null=True)
+    yards_gained = IntegerField(column_name='Yards_Gained', null=True)
     airepa = TextField(column_name='airEPA', null=True)
     airwpa = TextField(column_name='airWPA', null=True)
     desc = TextField(null=True)
@@ -140,3 +140,14 @@ class Nflpbp(BaseModel):
         'awayteam':self.awayteam,
         'season':self.season,
         }
+
+class StatsForSeason(BaseModel):
+    stat_type = IntegerField()
+    season = TextField(null=True)
+    stats_for_season=TextField(null=True)
+
+
+    class Meta:
+        table_name = 'statsforseason'
+
+

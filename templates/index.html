@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-NFL Seasons for Play by Play
+NFL Seasons for Stats and Play by Play
 {% endblock %}
 
 {% block content %}
+<h2>NFL Season for Stats and Play by Play Game Data</h2>
 	<ul>
 		{% for season in seasons %}
 		<li><a href="/{{ season['season'] }}">{{ season["season"] }}</a></li>

@@ -69,9 +69,10 @@ $(document).ready(function(){
     			setTimeout(perform_next_play, play_timeout);
     		} else {
     			// GAME OVER
-    			play_data = quarter_data[current_play_index-1]
-    			$(".team1_score").html(play_data.posteamscore);
-				$(".team2_score").html(play_data.defteamscore);
+    			// console.log(quarter_data[quarter_data.length-2])
+    			last_play_data = quarter_data[quarter_data.length-2]
+    			$(".team1_score").html(last_play_data.posteamscore);
+				$(".team2_score").html(last_play_data.defteamscore);
     			$("#gameover").show();
     		}
     	} 

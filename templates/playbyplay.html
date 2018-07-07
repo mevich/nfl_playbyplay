@@ -58,18 +58,19 @@
       top: 200px;
       font-size: 4em;
       color: white;
-      text-align: center;
     }
     #gameover {
       position: relative;
       top: 175px;
       font-size: 4em;
       color: white;
-      text-align: center;
     }
     .team_logo {
-      width: 50px;
-      height: 50px;
+      width: 30px;
+      height: 30px;
+    }
+    .team1, .team2 {
+      margin: 0px 10px;
     }
 
     </style>
@@ -83,17 +84,17 @@
    		<img id="endzone_logo2" src="/static/images/teamlogos/{{awayteam}}.png" width="100" height="50" />
    		<div id="first_down_line"></div>
       <div id="play_description"></div>
-      <div id="loading">Loading..</div>
-      <div id="gameover">GAMEOVER</div>
+      <div id="loading" class="text-center">Loading..</div>
+      <div id="gameover" class="text-center">GAMEOVER</div>
       <div id="game_state">
         <p>qtr <span class="quarter_number"></span><span class="time_left"></span></p>
         <p><span class="current_down"></span> down and <span class="yards_to_go"></span> yards to go. Ball on <span class="side_of_field"></span> <span class="yard_line"></span></p>
         <p>
           <img  class="team_logo" src="/static/images/teamlogos/{{hometeam}}.png">
-          <span class="team1"></span>
-          <span class="team1_score"></span>
-          <span class="team2_score"></span>
-          <span class="team2"></span> 
+          <span class="team1 h3"></span>
+          <span class="team1_score h3 mr-2"></span>
+          <span class="team2_score h3"></span>
+          <span class="team2 h3"></span> 
           <img  class="team_logo" src="/static/images/teamlogos/{{awayteam}}.png">
         </p>
       </div>
