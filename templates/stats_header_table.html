@@ -1,0 +1,12 @@
+	{% if stats == 'rushing' %}
+		<th scope="col"><a class="header_click" href="?sort=rusher">Rusher</a></th>
+	{% endif %}
+	{% if stats == 'passing' %}
+		<th scope="col"><a class="header_click" href="?sort=passer">Passer</a></th>
+	{% endif %}
+	{% if stats == 'receiving' %}
+		<th scope="col"><a class="header_click" href="?sort=receiver">Receiver</a></th>
+	{% endif %}
+	<th scope="col"><a class="header_click" href="?sort=td_count">Touchdowns</a></th>
+	<th scope="col"><a class="header_click" href="?sort=team">Team</a></th>
+	<th scope="col"><a class="header_click" href="?sort=longest_td">Longest TD</a></th>

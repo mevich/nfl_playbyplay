@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h2>NFL {{stats}} Leaders for {{season}} Season</h2>
+	<div class="container">
+		<table class="table table-striped">
+			<thead>
+			{% include 'stats_header_table.html' %}
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+
+		function check_job_status(job_id) {
+			$.get("/job/"+job_id+"/", function(data){
+				if (data.status) {
+					fetch_data();
+				} else {
+					setTimeout(check_job_status, 1000, job_id);
+				}
+			});
+		}
+
+		function fetch_data() {
+			$.get("{{ url_for('get_redis_celery_data', season=season, stats=stats) }}", function(data){
+				if (data.status == "success") {
+					$('tbody').html(data.html);
+				} else if (data.status == "pending") {
+					setTimeout(check_job_status, 1000, data.job_id);
+				}
+			});
+		}
+
+		$(document).ready(function() {
+			fetch_data();
+		});
+	</script>
+{% endblock %}

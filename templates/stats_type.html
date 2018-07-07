@@ -10,18 +10,7 @@ NFL {{stats}} Leaders for {{season}} Season
 	<div class="container">
 		<table class="table table-striped">
 			<thead>
-				{% if stats == 'rushing' %}
-					<th scope="col"><a class="header_click" href="?sort=rusher">Rusher</a></th>
-				{% endif %}
-				{% if stats == 'passing' %}
-					<th scope="col"><a class="header_click" href="?sort=rusher">Passer</a></th>
-				{% endif %}
-				{% if stats == 'receiving' %}
-					<th scope="col"><a class="header_click" href="?sort=rusher">Receiver</a></th>
-				{% endif %}
-				<th scope="col"><a class="header_click" href="?sort=td_count">Touchdowns</a></th>
-				<th scope="col"><a class="header_click" href="?sort=team">Team</a></th>
-				<th scope="col"><a class="header_click" href="?sort=longest_td">Longest TD</a></th>
+			{% include 'stats_header_table.html' %}
 			</thead>
 			<tbody>
 			{% include 'stats_type_table.html' %}

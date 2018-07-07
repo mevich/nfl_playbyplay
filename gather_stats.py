@@ -103,7 +103,7 @@ def td_stats(stats):
 	# Rushing_stats_season.create_table()
 
 	for season in stats_season_dict:
-		# StatsForSeason.create(stat_type=StatsEnum.stats.value, season=season,stats_for_season=json.dumps(stats_season_dict[season]))
+		# StatsForSeason.create(stat_type=StatsEnum(stats).value, season=season,stats_for_season=json.dumps(stats_season_dict[season]))
 		if stats=='rushing':
 			StatsForSeason.create(stat_type=StatsEnum.rushing.value, 
                 season=season,stats_for_season=json.dumps(stats_season_dict[season]))
@@ -114,8 +114,23 @@ def td_stats(stats):
 			StatsForSeason.create(stat_type=StatsEnum.receiving.value, 
                 season=season,stats_for_season=json.dumps(stats_season_dict[season]))
 
-		# rush_db_entry = Rushing_stats_season(season=season,rushing_stats=rush_stats_for_season[season])
-		# rush_db_entry.save()
+		# stats_db_entry = StatsForSeason(season=season,stats_for_season=json.dumps(stats_season_dict[season]),stat_type=StatsEnum.rushing.value)
+		# stats_db_entry.save()
     # database.close()
+
+
+def get_season_stats_async(season,stats):
+	if stats=='rushing':
+		stats_for_season_qry_obj = StatsForSeason.select(StatsForSeason.stats_for_season).where(StatsForSeason.stat_type==StatsEnum.rushing.value, 
+			StatsForSeason.season==season).first()
+	elif stats=='passing':
+		stats_for_season_qry_obj = StatsForSeason.select(StatsForSeason.stats_for_season).where(StatsForSeason.stat_type==StatsEnum.rushing.value, 
+			StatsForSeason.season==season).first()
+	elif stats=='receiving':
+		stats_for_season_qry_obj = StatsForSeason.select(StatsForSeason.stats_for_season).where(StatsForSeason.stat_type==StatsEnum.rushing.value, 
+			StatsForSeason.season==season).first()
+
+	return json.loads(stats_for_season_qry_obj.stats_for_season)
+
 
 

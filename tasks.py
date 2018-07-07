@@ -1,36 +1,22 @@
-from app import app
+import json
+from utils.celery_utils import celery_object
+from utils.redis_utils import redis_conn
 
-from celery import Celery
-
-from gather_stats import td_stats
-
-def make_celery(app):
-    celery = Celery(
-        app.import_name,
-        backend=app.config['CELERY_RESULT_BACKEND'],
-        broker=app.config['CELERY_BROKER_URL']
-    )
-    celery.conf.update(app.config)
-
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery.Task = ContextTask
-    return celery
-
-app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
-)
-celery = make_celery(app)
+from gather_stats import td_stats, get_season_stats_async
 
 
 
-
-@celery.task()
+@celery_object.task()
 def compute_all_state():
     td_stats()
     print "completed"
     return
+
+
+@celery_object.task()
+def get_stats_notin_redis(season, stats, redis_key):
+    data = get_season_stats_async(season, stats)
+    redis_conn.setex(redis_key, json.dumps(data), 60*60)
+    print "DONE"
+    return
+
