@@ -9,8 +9,9 @@
 		{% if stats == 'receiving' %}
 			<td>{{ stats_type.receiver }}</td>
 		{% endif %}
-		<td>{{ stats_type.td_count }}</td>
 		<td>{{ stats_type.team }}</td>
+		<td>{{ stats_type.total_yards }}</td>
+		<td>{{ stats_type.td_count }}</td>
 		<td>{{ stats_type.longest_td }}</td>
 	</tr>
 {% endfor %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+NFL {{stats}} charts for {{season}} Season
+{% endblock %}
+
+
+{% block content %}
+<h2>NFL {{stats}} charts for {{season}} Season</h2>
+<!-- {{ stats_data }} -->
+<canvas id="statsChart" width="200" height="200"></canvas>
+
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script type="text/javascript">
+        var ctx = $("#statsChart");
+        var scatterChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'NFL {{stats}} charts for {{season}} Season',
+                    data: [
+                    {% for data in stats_data %}
+                    {
+                        x: {{ data.total_attempts }},
+                        y: {{ data.total_yards }},
+                        name: '{{ data.name }}'
+                        
+                    },
+                    {% endfor %}
+                    ]
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'linear',
+                        position: 'bottom',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Total Attempts'
+                        },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }],
+                    yAxes: [{
+                        type: 'linear',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Total Yards'
+                        },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var player_data = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] || '';
+                            return player_data.name + ' (' + player_data.y + ' yards on ' + player_data.x + ' attempts YPA: ' + (player_data.y/player_data.x).toFixed(1) +')';
+                        },
+                        // labelColor: function(tooltipItem, chart) {
+                        //     return {
+                        //         borderColor: 'rgb(255, 0, 0)',
+                        //         backgroundColor: 'rgb(255, 0, 0)'
+                        //     }
+                        // },
+                        // labelTextColor:function(tooltipItem, chart){
+                        //     return '#543453';
+                        //  }
+                    }
+                }
+            },
+        });
+    </script>
+{% endblock %}

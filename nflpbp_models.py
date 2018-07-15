@@ -1,3 +1,4 @@
+import json
 from peewee import *
 
 database = SqliteDatabase('nfl.db', **{})
@@ -8,6 +9,19 @@ class UnknownField(object):
 class BaseModel(Model):
     class Meta:
         database = database
+
+class SessionTable(BaseModel):
+    session_id = CharField(primary_key=True)
+    body = BlobField()
+    created_at = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+    updated_at = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+
+    @property
+    def data(self):
+        return json.loads(str(self.body))
+
+    class Meta:
+        table_name = 'sessiontable'
 
 class Nflpbp(BaseModel):
     absscorediff = TextField(column_name='AbsScoreDiff', null=True)
@@ -149,5 +163,37 @@ class StatsForSeason(BaseModel):
 
     class Meta:
         table_name = 'statsforseason'
+
+class RushStatsForSeason(BaseModel):
+    season = TextField(null=True)
+    rusher = TextField(null=True)
+    rusher_id = TextField(null=True)
+    total_yards = FloatField()
+    total_attempts = FloatField()
+
+    class Meta:
+        table_name = 'rushstatsforseason'
+
+
+class PassStatsForSeason(BaseModel):
+    season = TextField(null=True)
+    passer = TextField(null=True)
+    passer_id = TextField(null=True)
+    total_yards = FloatField()
+    total_attempts = FloatField()
+
+    class Meta:
+        table_name = 'passstatsforseason'
+
+
+class ReceiveStatsForSeason(BaseModel):
+    season = TextField(null=True)
+    receiver = TextField(null=True)
+    receiver_id = TextField(null=True)
+    total_yards = FloatField()
+    total_attempts = FloatField()
+
+    class Meta:
+        table_name = 'receivestatsforseason'
 
 

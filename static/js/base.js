@@ -87,10 +87,10 @@ $(document).ready(function(){
 	  $("#loading").hide();
 	  /*
 	  	$.each(data, function(index,val){
-	  	console.log(index, data[index])
+	  	console.log(index, data[index]);
 	  	quarter_data = data[index];
 	  	current_play_index = 0;
-	  	console.log(index,current_play_index)
+	  	console.log(index,current_play_index);
 	  })
 	  */
 	  	all_quarters_data = data;
