@@ -40,6 +40,7 @@ def get_aggregate_stats(stats):
             & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.receiver_id, Nflpbp.receiver).dicts()
 
     stats_season_dict={}
+    stats_all_player = []
     stats_season_obj = [x for x in stats_query]
 
     total_stats_query_obj = [x for x in total_stats_query]
@@ -54,28 +55,30 @@ def get_aggregate_stats(stats):
             1==1
         if season_not_exists:
             stats_type_obj = [x for x in stats_season_obj if x['season']==stats_season]
-            stat_td = []
-            # rush_td_game = []
+            stat_all = []
             for stats_type in stats_type_obj:
                 if stats=='rushing':
                     stats_type_for_name = 'rusher'
                     stats_type_for_id = 'rusher_id'
                     stats_type_for = stats_type[stats_type_for_id]
+                    stat_type=StatsEnum.rushing.value
                 elif stats=='passing':
                     stats_type_for_name = 'passer'
                     stats_type_for_id = 'passer_id'
                     stats_type_for = stats_type[stats_type_for_id]
+                    stat_type=StatsEnum.passing.value
                 elif stats=='receiving':
                     stats_type_for_name = 'receiver'
                     stats_type_for_id = 'receiver_id'
                     stats_type_for = stats_type[stats_type_for_id]
+                    stat_type=StatsEnum.receiving.value
                 stats_for_not_exists = True
-                for i,v in enumerate(stat_td):
-                    stats_dict = stat_td[i]
+                for i,v in enumerate(stat_all):
+                    stats_dict = stat_all[i]
                     if stats_dict[stats_type_for_id] == stats_type_for:
                         stats_for_not_exists = False
                 stats_dict = {}
-                # rush_game_dict={}
+                # stats_all_player_dict={}
                 if stats_for_not_exists:
                     stats_dict['season'] = stats_season
                     stats_dict[stats_type_for_id] = stats_type_for
@@ -92,36 +95,24 @@ def get_aggregate_stats(stats):
                     td_list.sort(key=lambda k: k['yards_gained'], reverse=True)
                     stats_dict['longest_td'] = td_list[0]['yards_gained']
                     for total_stats_type in total_stats_query_obj:
-                        if (total_stats_type[stats_type_for_name] == stats_dict[stats_type_for_name] and total_stats_type[stats_type_for_id] == stats_dict[stats_type_for_id] and total_stats_type['season'] == stats_season):
+                        if (total_stats_type[stats_type_for_name] == stats_dict[stats_type_for_name] and 
+                                total_stats_type[stats_type_for_id] == stats_dict[stats_type_for_id] and 
+                                total_stats_type['season'] == stats_season):
                             stats_dict['total_yards'] = total_stats_type['total_yards']
                             stats_dict['total_attempts'] = total_stats_type['total_attempts']
+                    stats_player_data = (stat_type, stats_season, stats_type_for, stats_type[stats_type_for_name], stats_dict)
+                    stats_all_player.append(stats_player_data)
 
-                    stat_td.append(stats_dict)
-
-                    # rush_game_dict[rusher] = [td_list]
-
-                    # rush_td_game.append(rush_game_dict)
+                    stat_all.append(stats_dict)
 
 
+            stat_all.sort(key=lambda k: k['td_count'], reverse=True)
+            stats_season_dict[stats_season] = stat_all
 
-            #sorted(rush_td, key=lambda k: k['td_count'], reverse=True)
-            stat_td.sort(key=lambda k: k['td_count'], reverse=True)
-            #print json.dumps(rush_td)
-            #print pprint.pprint(rush_td)
-            #print pprint.pprint(rush_td_game)
-
-            stats_season_dict[stats_season] = stat_td
-
-        #return rushing_season
-
-    # rush_stats_for_season = rushing_td_stats()
-    # print pprint.pprint(rush_stats_for_season)
     with database:
-        database.create_tables([StatsForSeason])
-    # Rushing_stats_season.create_table()
+        database.create_tables([StatsForSeason, PlayerStatsForSeason])
 
     for season in stats_season_dict:
-        # StatsForSeason.create(stat_type=StatsEnum(stats).value, season=season,stats_for_season=json.dumps(stats_season_dict[season]))
         if stats=='rushing':
             StatsForSeason.create(stat_type=StatsEnum.rushing.value, 
                 season=season,stats_for_season=json.dumps(stats_season_dict[season]))
@@ -132,9 +123,9 @@ def get_aggregate_stats(stats):
             StatsForSeason.create(stat_type=StatsEnum.receiving.value, 
                 season=season,stats_for_season=json.dumps(stats_season_dict[season]))
 
-        # stats_db_entry = StatsForSeason(season=season,stats_for_season=json.dumps(stats_season_dict[season]),stat_type=StatsEnum.rushing.value)
-        # stats_db_entry.save()
-    # database.close()
+    fields = [PlayerStatsForSeason.stat_type, PlayerStatsForSeason.season, 
+        PlayerStatsForSeason.player_id, PlayerStatsForSeason.player_name, PlayerStatsForSeason.stats_for_season]
+    PlayerStatsForSeason.insert_many(stats_all_player, fields=fields).execute()
 
 
 def get_season_stats_async(season,stats):

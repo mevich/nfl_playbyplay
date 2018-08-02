@@ -73,6 +73,12 @@
       margin: 0px 10px;
     }
 
+    .button{
+      position: absolute;
+      top: 450px;
+      left: 50px;
+    }
+
     </style>
 {% endblock %}
 
@@ -86,6 +92,7 @@
       <div id="play_description"></div>
       <div id="loading" class="text-center">Loading..</div>
       <div id="gameover" class="text-center">GAMEOVER</div>
+      <div><button class="button">Play</button></div>
       <div id="game_state">
         <p>qtr <span class="quarter_number"></span><span class="time_left"></span></p>
         <p><span class="current_down"></span> down and <span class="yards_to_go"></span> yards to go. Ball on <span class="side_of_field"></span> <span class="yard_line"></span></p>

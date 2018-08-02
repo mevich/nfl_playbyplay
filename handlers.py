@@ -1,14 +1,22 @@
 import json, time, uuid
 from flask import Response, jsonify, render_template, abort, request, make_response, flash, redirect
 from celery.result import AsyncResult
+from werkzeug.datastructures import CombinedMultiDict
 
 from app import app
 from tasks import *
 from nflpbp_models import *
 from gather_stats import StatsEnum
 from utils.redis_utils import redis_conn
+from wtforms import TextField, Form, validators
+from ast import literal_eval
+from forms import RegisterForm
+from utils.helpers import *
+import hashlib
+# from utils.config import S3_BUCKET, S3_LOCATION
 
 session_cookie_name = 'football_stats_sess'
+
 
 
 @app.before_request
@@ -36,11 +44,11 @@ class Session(object):
             return None
 
     @classmethod
-    def update(cls, session_id, update_data):
-        old_data = cls.get(session_id)
-        if not old_data: return
-        old_data.update(update_data)
-        upd_data = json.dumps(old_data)
+    def update(cls, session_id, new_data):
+        curr_data = cls.get(session_id)
+        if not curr_data: return
+        curr_data.update(new_data)
+        upd_data = json.dumps(curr_data)
         return SessionTable.update(body=upd_data).where(SessionTable.session_id==session_id).execute()
 
     @classmethod
@@ -57,7 +65,7 @@ def get_home():
 
     # When a session is created, 
  
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login/', methods=['GET','POST'])
 def do_admin_login():
     if request.form.get('password') == 'password' and request.form.get('username') == 'admin':
         user_data = {"user_id": 1}
@@ -70,12 +78,46 @@ def do_admin_login():
         flash('wrong password!')
         return render_template('login.html')
 
-@app.route('/logout', methods=['GET','POST'])
+@app.route('/logout/', methods=['GET','POST'])
 def do_logout():
     response = make_response(render_template('logout.html'))
     response.delete_cookie(session_cookie_name)
     Session.delete(request.session)
     return response
+
+
+@app.route('/register/', methods=['GET'])
+def get_register():
+    form = RegisterForm()
+    return render_template('form.html', form=form)
+
+
+@app.route("/register/", methods=['POST'])
+def post_register():
+    data = CombinedMultiDict((request.files, request.form))
+    form = RegisterForm(data)
+    if form.validate():
+        image_object = form.image_upload.data
+        hashed_image = hashlib.md5(image_object.read()).hexdigest()
+        hashed_image_key = 'originals/{}'.format(hashed_image)
+        upload_file_to_s3(image_object, hashed_image_key)
+        db_entry = RegisteredUsers.create(email=form.data['email'], password=form.data['password'], image_name=hashed_image)
+        # return render_template('profie.html')
+
+        do_resize_image_square.delay(db_entry.id)
+        do_resize_image_longest.delay(db_entry.id)
+
+        # resize_image_longest_edge(hashed_image,1000)
+        # resize_image_square(hashed_image, 500)
+        
+        if request.is_xhr:
+            return jsonify({'success': True, 'message':('User {} created by ajax request').format(form.data['email'])})
+        else:
+            return 'User {} was created'.format(form.data['email'])
+    else:
+        print form.errors
+        return render_template('form.html', form=form)
+
 
 @app.route("/all_seasons/")
 def get_all_seasons():
@@ -154,7 +196,7 @@ def get_stats_for_season(season, stats):
 
     response =  make_response(render_template('stats_type.html', season=season,stats=stats,
         stats_season=stats_type_for_season))
-    response.set_cookie('cookie_name',value=uuid.uuid4().hex)
+    # response.set_cookie('cookie_name',value=uuid.uuid4().hex)
     return response
 
 
@@ -173,11 +215,6 @@ def get_redis_celery_data(season, stats):
         html = render_template("stats_type_table.html", stats_season=stats_season, stats=stats)
         return jsonify({"status": "success", "html": html})
     else:
-        #call celery function to fetch data using the async function
-        #if celery function status is pending, return pending to the new page.
-        #check the status for every 10 secs
-        #if celery function status is success, then render data in the new page. 
-        #This has to be done through ajax only calling the table template to refresh the table
         celery_worker_job = get_stats_notin_redis.delay(season, stats, redis_key)
         return jsonify({"status": "pending", "job_id": celery_worker_job.id})
 
@@ -202,19 +239,58 @@ def get_season_stats_charts(season, stats):
         if celery_worker_job.status == 'SUCCESS':
             return get_season_stats_charts(season, stats)
 
+class SearchForm(Form):
+    player_search = TextField('Enter Player Name', id='player_search')
 
-# @app.route("/stats/<season>/<stats>/charts/")
-# def get_season_stats_charts(season, stats):
-#     if stats=='rushing':
-#         table_name = RushStatsForSeason
-#         aggr_stats_qry = table_name.select(table_name.rusher, table_name.total_yards, table_name.total_attempts).where(table_name.season==season)
-#     elif stats=='passing':
-#         table_name = PassStatsForSeason
-#         aggr_stats_qry = table_name.select(table_name.passer, table_name.total_yards, table_name.total_attempts).where(table_name.season==season)
-#     elif stats=='receiving':
-#         table_name = ReceiveStatsForSeason
-#         aggr_stats_qry = table_name.select(table_name.receiver, table_name.total_yards, table_name.total_attempts).where(table_name.season==season)
 
-#     aggr_stats_qry_obj = [{'name': x[0], 'total_yards': x[1], 'total_attempts': x[2]} for x in aggr_stats_qry.tuples()]
+@app.route('/players/autocomplete/search/', methods=['GET', 'POST'])
+def get_autocomplete_form():
+    form = SearchForm(request.form)
+    return render_template("autocomplete.html", form=form)
 
-#     return render_template('stats_chart.html', stats=stats, season=season, stats_data=aggr_stats_qry_obj)
+
+@app.route('/players/autocomplete/', methods=['GET'])
+def get_autocomplete():
+    search_by = request.args.get("term", '')
+    rushers = PlayerStatsForSeason.select(PlayerStatsForSeason.player_name).distinct().where(PlayerStatsForSeason.player_name.contains('%' + search_by)).tuples()
+    names = [x[0] for x in rushers]
+    return jsonify(names)
+
+@app.route('/players/autocomplete/data/', methods=['GET'])
+def get_autocomplete_data():
+    player_name = request.args.get("term", '')
+    all_stats_for_player = get_player_data(player_name)
+    return render_template('player_data.html', name=player_name, player_stats=all_stats_for_player)
+
+@app.route('/players/autocomplete/charts/', methods=['GET'])
+def get_autocomplete_charts():
+    player_name = request.args.get("term", '')
+    all_stats_for_player = get_player_data(player_name)
+    return render_template('player_charts.html', name=player_name, player_stats=all_stats_for_player)
+
+
+def get_player_data(player_name):
+    stats_for_season_obj = PlayerStatsForSeason.select(PlayerStatsForSeason.stats_for_season, PlayerStatsForSeason.stat_type, PlayerStatsForSeason.season).distinct().where(PlayerStatsForSeason.player_name==player_name).tuples()
+    # stats_for_season_data = [literal_eval(x[0]) for x in stats_for_season_obj]
+    all_stats_for_player=[]
+    
+    for x in stats_for_season_obj:
+        all_stats_for_season={}
+        season_not_exists = False
+        if all_stats_for_player:
+            if x[2] not in [p['season'] for p in all_stats_for_player]:
+                    all_stats_for_season['season']=x[2]
+                    all_stats_for_season['rushing'] = [literal_eval(a[0]) for a in stats_for_season_obj if (a[2]==all_stats_for_season['season'] and a[1]==1)]
+                    all_stats_for_season['passing'] = [literal_eval(a[0]) for a in stats_for_season_obj if (a[2]==all_stats_for_season['season'] and a[1]==2)]
+                    all_stats_for_season['receiving'] = [literal_eval(a[0]) for a in stats_for_season_obj if (a[2]==all_stats_for_season['season'] and a[1]==3)]
+        else:
+            all_stats_for_season['season']=x[2]
+            all_stats_for_season['rushing'] = [literal_eval(a[0]) for a in stats_for_season_obj if (a[2]==all_stats_for_season['season'] and a[1]==1)]
+            all_stats_for_season['passing'] = [literal_eval(a[0]) for a in stats_for_season_obj if (a[2]==all_stats_for_season['season'] and a[1]==2)]
+            all_stats_for_season['receiving'] = [literal_eval(a[0]) for a in stats_for_season_obj if (a[2]==all_stats_for_season['season'] and a[1]==3)]
+
+        if all_stats_for_season:
+            all_stats_for_player.append(all_stats_for_season)
+            all_stats_for_player.sort(key=lambda k:k['season'])
+
+    return all_stats_for_player

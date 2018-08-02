@@ -1,0 +1,51 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+</head>
+<body>
+    <div class="container">
+        {{ form.player_search.label }}: {{ form.player_search }}
+    </div>
+    <p></p>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+<script type="text/javascript">
+
+    function fetch_player_data(player_name) {
+        $.get("{{ url_for('get_autocomplete_data') }}", {term: player_name}, function(data){
+            $('p').html(data);
+        });
+    }
+
+    function fetch_player_charts(player_name){
+        console.log(player_name)
+        $.get("{{ url_for('get_autocomplete_charts') }}", {term: player_name}, function(data){
+            $('p').append(data);
+        });
+    }
+
+     $("#player_search").autocomplete({ 
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ url_for('get_autocomplete') }}",
+                data: {
+                    term: request.term
+                },
+                success: function(data) {
+                response(data);
+                }
+            });
+        },
+            minLength: 2,
+            select: function(event, ui) {
+                console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+                fetch_player_data(ui.item.value);
+                fetch_player_charts(ui.item.value);
+            }
+        });
+</script>
+</body>
+</html>

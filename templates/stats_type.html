@@ -21,7 +21,7 @@ NFL {{stats}} Leaders for {{season}} Season
 
 {% block js %}
 	<script type="text/javascript">
-		$(document).ready(function() {
+		$(function() {
 			$(".header_click").click(function() {
 				$.get($(this).attr("href"), function(data){
 					$('tbody').html(data);

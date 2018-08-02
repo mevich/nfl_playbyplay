@@ -1,0 +1,63 @@
+
+<h2>NFL Stats for {{name}}</h2>
+<div class="container">
+	<table class="table table-striped">
+		<thead>
+      
+	      <tr class="over_header">
+	         <th aria-label="" data-stat="" colspan="5" class=" over_header center"></th>
+	         <th aria-label="" data-stat="header_rush" colspan="4" class=" over_header left">Rushing</th>
+	         <th aria-label="" data-stat="header_pass" colspan="4" class=" over_header left">Passing</th>
+	         <th aria-label="" data-stat="header_rec" colspan="4" class=" over_header left">Receiving</th>
+	      </tr>
+	      <tr>
+		     <th aria-label="Season" data-stat="season" scope="col" class=" poptip sort_default_asc left">Year</th>
+		     <th aria-label="Team" data-stat="team" scope="col" class=" poptip sort_default_asc left">Team</th>
+	         <!-- <th aria-label="PositionIn player and team season stats,Capitals indicates primary starter.Lower-case means part-time starter." data-stat="pos" scope="col" class=" poptip sort_default_asc left" data-tip="<b>Position</b><br>In player and team season stats,<br>Capitals indicates primary starter.<br>Lower-case means part-time starter.">Pos</th> -->
+	         <th aria-label="Rushing Att" data-stat="rush_att" scope="col" class=" poptip center" data-tip="Rushing Attempts (sacks not included in NFL)" data-over-header="Rushing">Rush</th>
+	         <th aria-label="Rushing Yds" data-stat="rush_yds" scope="col" class=" poptip center" data-tip="Rushing Yards Gained (sack yardage is not included by NFL)" data-over-header="Rushing">Yds</th>
+	         <th aria-label="Rushing TD" data-stat="rush_td" scope="col" class=" poptip center" data-tip="Rushing Touchdowns" data-over-header="Rushing">TD</th>
+	         <th aria-label="Long Rush" data-stat="rush_long" scope="col" class=" poptip center" data-tip="Longest Rushing TD" data-over-header="Rushing">Lng TD</th>
+	         <th aria-label="Passing Att" data-stat="pass_att" scope="col" class=" poptip center" data-tip="Passing Attempts including sacks" data-over-header="Passing">Pass</th>
+	         <th aria-label="Passing Yds" data-stat="rush_yds" scope="col" class=" poptip center" data-tip="Passing Yards" data-over-header="Passing">Yds</th>
+	         <th aria-label="Pasisng TD" data-stat="rush_td" scope="col" class=" poptip center" data-tip="Passing Touchdowns" data-over-header="Passing">TD</th>
+	         <th aria-label="Long Rush" data-stat="rush_long" scope="col" class=" poptip center" data-tip="Longest Passing TD" data-over-header="Rushing">Lng TD</th>
+	         <th aria-label="Receiving Targets" data-stat="recv_tgt" scope="col" class=" poptip center" data-tip="Receving Targets" data-over-header="Receiving">Targets</th>
+	         <th aria-label="Receiving Yds" data-stat="recv_yds" scope="col" class=" poptip center" data-tip="Receiving Yards" data-over-header="Receiving">Yds</th>
+	         <th aria-label="Receiving TD" data-stat="recv_td" scope="col" class=" poptip center" data-tip="Receving Touchdowns" data-over-header="Receiving">TD</th>
+	         <th aria-label="Long Catch" data-stat="rush_long" scope="col" class=" poptip center" data-tip="Longest Receiving TD" data-over-header="Receiving">Lng TD</th>
+	      </tr>
+		</thead>
+		<tbody>
+			{% for player_data in player_stats %}
+				<tr>
+						<th scope="row" class="right" data-stat="season">{{ player_data.season }}</th>
+						{% for rushing_stats in player_data.rushing %}
+							<td class="right" data-stat="team">{{ rushing_stats.team }}</td>
+							<td class="right" data-stat="rush_att">{{ rushing_stats.total_attempts }}</td>
+							<td class="right" data-stat="rush_yds">{{ rushing_stats.total_yards }}</td>
+							<td class="right" data-stat="rush_td">{{ rushing_stats.td_count }}</td>
+							<td class="right" data-stat="rush_long">{{ rushing_stats.longest_td }}</td>
+						{% endfor %}
+					
+						{% for passing_stats in player_data.passing %}
+							<td class="right" data-stat="team">{{ passing_stats.team }}</td>
+							<td class="right" data-stat="pass_att">{{ passing_stats.total_attempts }}</td>
+							<td class="right" data-stat="pass_yds">{{ passing_stats.total_yards }}</td>
+							<td class="right" data-stat="pass_td">{{ passing_stats.td_count }}</td>
+							<td class="right" data-stat="pass_long">{{ passing_stats.longest_td }}</td>
+						{% endfor %}
+
+						{% for receiving_stats in player_data.receiving %}
+							<td class="right" data-stat="team">{{ receiving_stats.team }}</td>
+							<td class="right" data-stat="recv_tgt">{{ receiving_stats.total_attempts }}</td>
+							<td class="right" data-stat="recv_yds">{{ receiving_stats.total_yards }}</td>
+							<td class="right" data-stat="recv_td">{{ receiving_stats.td_count }}</td>
+							<td class="right" data-stat="recv_long">{{ receiving_stats.longest_td }}</td>	
+						{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+

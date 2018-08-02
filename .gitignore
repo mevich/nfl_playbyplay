@@ -3,3 +3,4 @@ nfl.db
 NFL_PlaybyPlay.csv
 *.pyc
 .DS_Store
+config_local.py

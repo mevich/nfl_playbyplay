@@ -3,6 +3,8 @@ from utils.celery_utils import celery_object
 from utils.redis_utils import redis_conn
 
 from gather_stats import *
+from utils.helpers import resize_image_square, resize_image_longest_edge
+from nflpbp_models import RegisteredUsers
 
 
 
@@ -32,4 +34,17 @@ def get_season_stats_charts_redis(season, stats, redis_key):
     chart_data = get_season_stats_charts_data(season, stats)
     redis_conn.setex(redis_key, json.dumps(chart_data), 60*60)
     print "DONE"
+    return
+
+
+@celery_object.task()
+def do_resize_image_square(user_id):
+    image_name = (RegisteredUsers.select(RegisteredUsers.image_name).where(RegisteredUsers.id==user_id).first()).image_name
+    resize_image_square(image_name, 500)
+    return
+
+@celery_object.task()
+def do_resize_image_longest(id):
+    image_name = (RegisteredUsers.select(RegisteredUsers.image_name).where(RegisteredUsers.id==id).first()).image_name
+    resize_image_longest_edge(image_name,1000)
     return

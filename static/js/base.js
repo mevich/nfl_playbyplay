@@ -78,9 +78,15 @@ $(document).ready(function(){
     	} 
     	else {
     		current_play_index += 1;
-    		setTimeout(perform_next_play, play_timeout);
+    		if ($('.button').text()=='Pause'){
+    				playSetTimeout = setTimeout(perform_next_play, play_timeout);
+    			}
+    			else if ($('.button').text()=='Play'){
+    				clearTimeout(playSetTimeout);
+    			}
     	}
 	}
+
 	$("#gameover").hide();
 	var url = $("#game_data_url").val();
 	$.get(url, function(data){
@@ -95,7 +101,16 @@ $(document).ready(function(){
 	  */
 	  	all_quarters_data = data;
 	  	current_quarter = 1;
-	  	perform_next_play();
+	  	$(".button").click(function(){
+	  		console.log($(this).text())
+	  		if ($(this).text() == 'Play'){
+	  			$(this).text('Pause');
+	  			perform_next_play();
+	  		}
+	  		else if ($(this).text() == 'Pause'){
+	  			$(this).text('Play');
+	  		}
+	  	});
 
 	});
 });

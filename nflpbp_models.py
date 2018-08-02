@@ -157,17 +157,17 @@ class Nflpbp(BaseModel):
 
 class StatsForSeason(BaseModel):
     stat_type = IntegerField()
-    season = TextField(null=True)
-    stats_for_season=TextField(null=True)
+    season = TextField()
+    stats_for_season=TextField()
 
 
     class Meta:
         table_name = 'statsforseason'
 
 class RushStatsForSeason(BaseModel):
-    season = TextField(null=True)
-    rusher = TextField(null=True)
-    rusher_id = TextField(null=True)
+    season = TextField()
+    rusher = TextField()
+    rusher_id = TextField()
     total_yards = FloatField()
     total_attempts = FloatField()
 
@@ -176,9 +176,9 @@ class RushStatsForSeason(BaseModel):
 
 
 class PassStatsForSeason(BaseModel):
-    season = TextField(null=True)
-    passer = TextField(null=True)
-    passer_id = TextField(null=True)
+    season = TextField()
+    passer = TextField()
+    passer_id = TextField()
     total_yards = FloatField()
     total_attempts = FloatField()
 
@@ -187,13 +187,33 @@ class PassStatsForSeason(BaseModel):
 
 
 class ReceiveStatsForSeason(BaseModel):
-    season = TextField(null=True)
-    receiver = TextField(null=True)
-    receiver_id = TextField(null=True)
+    season = TextField()
+    receiver = TextField()
+    receiver_id = TextField()
     total_yards = FloatField()
     total_attempts = FloatField()
 
     class Meta:
         table_name = 'receivestatsforseason'
+
+class PlayerStatsForSeason(BaseModel):
+    stat_type = IntegerField()
+    season = TextField()
+    player_id = TextField()
+    player_name = TextField()
+    stats_for_season=TextField()
+
+    class Meta:
+        table_name = 'playerstatsforseason'
+
+class RegisteredUsers(BaseModel):
+    email = CharField(unique=True)
+    password = TextField()
+    image_name = TextField(null=True)
+    created_at = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+    updated_at = DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+
+    class Meta:
+        table_name = 'registeredusers'
 
 

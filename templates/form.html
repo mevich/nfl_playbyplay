@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="{{ url_for('post_register') }}" method="POST" enctype="multipart/form-data">
+    <p>
+    {{ form.email.label }}
+    {{ form.email(class_="form-control") }}
+    {% if form.errors.email %}
+    {{ form.errors.email }}
+    {% endif %}
+    </p>
+    <p>
+    {{ form.password.label }}
+    {{ form.password(class_="form-control") }}
+    {% if form.errors.password %}
+    {{ form.errors.password }}
+    {% endif %}
+    </p>
+    <p>
+    {{ form.confirm.label }}
+    {{ form.confirm(class_="form-control") }}
+    {% if form.errors.confirm %}
+    {{ form.errors.confirm }}
+    {% endif %}
+    </p>
+    <p>
+        <div class="dropzone">
+        {{ form.image_upload.label }}
+        {{ form.image_upload(class_="form-control") }}
+        </div>
+    </p>
+    <input type="submit" class="btn btn-primary btn-lg" name="register">
+</form>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/dropzone.js"></script>
+<script type="text/javascript">
+    // $("#image_upload").dropzone()
+    $("form").submit(function() {
+        // $.ajax({
+        //     url: $(this).attr("action"),
+        //     type: 'POST',
+        //     data: new FormData($('form')[0]),
+        //     cache: false,
+        //     contentType: false,
+        //     processData: false,
+        //     success: function(data){
+        //         console.log(data);
+        //     }
+        // });
+        var formDatawithimage = new FormData($('form')[0]);
+        $.post({
+            url: $(this).attr("action"), 
+            data: formDatawithimage, 
+            contentType: false, 
+            cache: false, 
+            processData: false, 
+            success: function(data){
+                console.log(data);
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}

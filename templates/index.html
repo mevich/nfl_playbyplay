@@ -10,5 +10,6 @@ NFL Seasons for Stats and Play by Play
 		{% for season in seasons %}
 		<li><a href="/{{ season['season'] }}">{{ season["season"] }}</a></li>
 		{% endfor %}
+		<li><a href="/players/autocomplete/search/">Search for Player</a></li>
 	</ul>
 {% endblock %}
