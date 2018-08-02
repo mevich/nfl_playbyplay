@@ -44,7 +44,7 @@ def do_resize_image_square(user_id):
     return
 
 @celery_object.task()
-def do_resize_image_longest(id):
-    image_name = (RegisteredUsers.select(RegisteredUsers.image_name).where(RegisteredUsers.id==id).first()).image_name
+def do_resize_image_longest(user_id):
+    image_name = (RegisteredUsers.select(RegisteredUsers.image_name).where(RegisteredUsers.id==user_id).first()).image_name
     resize_image_longest_edge(image_name,1000)
     return
