@@ -1,5 +1,5 @@
 import boto3, botocore
-from config_local import *
+from config import *
 from io import BytesIO
 from PIL import Image
 from werkzeug.utils import secure_filename
