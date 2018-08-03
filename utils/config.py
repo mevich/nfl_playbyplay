@@ -8,5 +8,5 @@ S3_LOCATION = 'http://{}.s3.amazonaws.com/'.format(S3_BUCKET)
 
 try:
 	from config_local import *
-except:
-	raise ImportError
+except ImportError:
+	pass
