@@ -13,7 +13,7 @@ from ast import literal_eval
 from forms import RegisterForm
 from utils.helpers import *
 import hashlib
-from utils.config_local import *
+from utils.config import *
 
 session_cookie_name = 'football_stats_sess'
 
