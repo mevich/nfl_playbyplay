@@ -108,15 +108,15 @@ def post_register():
 
         image_url_profile = '{}1000px/{}'.format(S3_LOCATION, image_name)
 
-        return render_template('profile.html', email=form.data['email'], image_url=image_url_profile)
+        # return render_template('profile.html', email=form.data['email'], image_url=image_url_profile)
 
         # resize_image_longest_edge(hashed_image,1000)
         # resize_image_square(hashed_image, 500)
         
-        # if request.is_xhr:
-        #     return jsonify({'success': True, 'message':('User {} created by ajax request').format(form.data['email'])})
-        # else:
-        #     return 'User {} was created'.format(form.data['email'])
+        if request.is_xhr:
+            return jsonify({'success': True, 'message':('User {} created by ajax request').format(form.data['email'])})
+        else:
+            return 'User {} was created'.format(form.data['email'])
     else:
         print form.errors
         return render_template('form.html', form=form)
