@@ -3,3 +3,10 @@ peewee==3.5.2
 redis==2.10.6
 celery==4.2.0
 enum34
+wtforms
+boto3
+Pillow
+requests
+Fabric==2.2.2
+MySQL-python==1.2.5
+gunicorn==19.9.0
