@@ -122,7 +122,7 @@ def post_register():
         return render_template('form.html', form=form)
 
 
-@app.route("/all_seasons/")
+@app.route("/all-seasons/")
 def get_all_seasons():
     query_object = Nflpbp.select(Nflpbp.season).distinct().dicts()
     all_data = [x for x in query_object]
