@@ -5,7 +5,7 @@ $(document).ready(function(){
 	var play_timeout = 100;
 
 	function set_game_state_for_play(play_data) {
-		$("#play_description").html(play_data.desc);
+		$("#play_description").html(play_data.description);
 		$("#football_pos").css({left: posteam_yrds(play_data.awayteam, play_data.posteam, play_data.yrdln, play_data.yards_gained, play_data.yrdline100)});
 		var calc_left =  firstdown_line(play_data.awayteam,play_data.posteam, play_data.yrdline100, play_data.ydstogo);
 		$("#first_down_line").css({left: calc_left});

@@ -22,22 +22,22 @@ class StatsEnum(Enum):
 def get_aggregate_stats(stats):
     #database.connect()
     if stats=='rushing':
-        stats_query = Nflpbp.select(Nflpbp.posteam,Nflpbp.rusher,Nflpbp.rusher_id,Nflpbp.yards_gained,Nflpbp.defensiveteam,Nflpbp.gameid,Nflpbp.season).where(Nflpbp.touchdown==1,Nflpbp.rusher!='NA',Nflpbp.rusher_id!='None',~(Nflpbp.desc.contains('%REVERSED%')), ~(Nflpbp.desc.contains('%NULLIFIED%'))).dicts()
+        stats_query = Nflpbp.select(Nflpbp.posteam,Nflpbp.rusher,Nflpbp.rusher_id,Nflpbp.yards_gained,Nflpbp.defensiveteam,Nflpbp.gameid,Nflpbp.season).where(Nflpbp.touchdown==1,Nflpbp.rusher!='NA',Nflpbp.rusher_id!='None',~(Nflpbp.description.contains('%REVERSED%')), ~(Nflpbp.description.contains('%NULLIFIED%'))).dicts()
     #rush_td_max = Nflpbp.select(Nflpbp.rusher_id, fn.Sum(Nflpbp.touchdown).alias('total_touchdowns')).where(Nflpbp.touchdown==1, Nflpbp.rusher!='NA').group_by(Nflpbp.rusher_id).dicts()
     #rush_td_max_yards = Nflpbp.select(Nflpbp.rusher_id, fn.Max(Nflpbp.yards_gained).alias('longest_td')).where(Nflpbp.touchdown==1, Nflpbp.rusher!='NA').group_by(Nflpbp.rusher_id).dicts()
         total_stats_query = Nflpbp.select(Nflpbp.season, Nflpbp.rusher_id, Nflpbp.rusher, Nflpbp.posteam, 
             fn.SUM(Nflpbp.yards_gained).alias('total_yards'), fn.Count(Nflpbp.rusher_id).alias('total_attempts')).where((Nflpbp.rusher!='NA') & (Nflpbp.rusher_id!='None') 
-            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.rusher_id,Nflpbp.rusher).dicts()
+            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.rusher_id,Nflpbp.rusher,Nflpbp.posteam).dicts()
     elif stats=='passing':          
-        stats_query = Nflpbp.select(Nflpbp.posteam,Nflpbp.passer,Nflpbp.passer_id,Nflpbp.yards_gained,Nflpbp.defensiveteam,Nflpbp.gameid,Nflpbp.season).where(Nflpbp.touchdown==1,Nflpbp.passer!='NA',Nflpbp.passer_id!='NA',~(Nflpbp.desc.contains('%REVERSED%')), ~(Nflpbp.desc.contains('%NULLIFIED%'))).dicts()
+        stats_query = Nflpbp.select(Nflpbp.posteam,Nflpbp.passer,Nflpbp.passer_id,Nflpbp.yards_gained,Nflpbp.defensiveteam,Nflpbp.gameid,Nflpbp.season).where(Nflpbp.touchdown==1,Nflpbp.passer!='NA',Nflpbp.passer_id!='NA',~(Nflpbp.description.contains('%REVERSED%')), ~(Nflpbp.description.contains('%NULLIFIED%'))).dicts()
         total_stats_query = Nflpbp.select(Nflpbp.season, Nflpbp.passer_id, Nflpbp.passer, Nflpbp.posteam, 
             fn.SUM(Nflpbp.yards_gained).alias('total_yards'), fn.Count(Nflpbp.passer_id).alias('total_attempts')).where((Nflpbp.passer!='NA') & (Nflpbp.passer_id!='None') 
-            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.passer_id,Nflpbp.passer).dicts()
+            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.passer_id,Nflpbp.passer,Nflpbp.posteam).dicts()
     elif stats=='receiving':
-        stats_query = Nflpbp.select(Nflpbp.posteam,Nflpbp.receiver,Nflpbp.receiver_id,Nflpbp.yards_gained,Nflpbp.defensiveteam,Nflpbp.gameid,Nflpbp.season).where(Nflpbp.touchdown==1,Nflpbp.receiver!='NA',Nflpbp.receiver_id!='NA',~(Nflpbp.desc.contains('%REVERSED%')), ~(Nflpbp.desc.contains('%NULLIFIED%'))).dicts()
+        stats_query = Nflpbp.select(Nflpbp.posteam,Nflpbp.receiver,Nflpbp.receiver_id,Nflpbp.yards_gained,Nflpbp.defensiveteam,Nflpbp.gameid,Nflpbp.season).where(Nflpbp.touchdown==1,Nflpbp.receiver!='NA',Nflpbp.receiver_id!='NA',~(Nflpbp.description.contains('%REVERSED%')), ~(Nflpbp.description.contains('%NULLIFIED%'))).dicts()
         total_stats_query = Nflpbp.select(Nflpbp.season, Nflpbp.receiver_id, Nflpbp.receiver, Nflpbp.posteam, 
             fn.SUM(Nflpbp.yards_gained).alias('total_yards'), fn.Count(Nflpbp.receiver_id).alias('total_attempts')).where((Nflpbp.receiver!='NA') & (Nflpbp.receiver_id!='None') 
-            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.receiver_id, Nflpbp.receiver).dicts()
+            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.receiver_id, Nflpbp.receiver,Nflpbp.posteam).dicts()
 
     stats_season_dict={}
     stats_all_player = []
@@ -98,8 +98,8 @@ def get_aggregate_stats(stats):
                         if (total_stats_type[stats_type_for_name] == stats_dict[stats_type_for_name] and 
                                 total_stats_type[stats_type_for_id] == stats_dict[stats_type_for_id] and 
                                 total_stats_type['season'] == stats_season):
-                            stats_dict['total_yards'] = total_stats_type['total_yards']
-                            stats_dict['total_attempts'] = total_stats_type['total_attempts']
+                            stats_dict['total_yards'] = float(total_stats_type['total_yards'])
+                            stats_dict['total_attempts'] = float(total_stats_type['total_attempts'])
                     stats_player_data = (stat_type, stats_season, stats_type_for, stats_type[stats_type_for_name], stats_dict)
                     stats_all_player.append(stats_player_data)
 
@@ -148,17 +148,17 @@ def get_yards_aggregate_stats(stats):
     if stats=='rushing':
         total_stats_query = Nflpbp.select(Nflpbp.season, Nflpbp.rusher_id, Nflpbp.rusher, Nflpbp.posteam, 
             fn.SUM(Nflpbp.yards_gained).alias('total_yards'), fn.Count(Nflpbp.rusher_id).alias('total_attempts')).where((Nflpbp.rusher!='NA') & (Nflpbp.rusher_id!='None') 
-            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.rusher_id,Nflpbp.rusher).dicts()
+            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.rusher_id,Nflpbp.rusher,Nflpbp.posteam).dicts()
         table_name = RushStatsForSeason
     elif stats=='passing':
       total_stats_query = Nflpbp.select(Nflpbp.season, Nflpbp.passer_id, Nflpbp.passer, Nflpbp.posteam, 
             fn.SUM(Nflpbp.yards_gained).alias('total_yards'), fn.Count(Nflpbp.passer_id).alias('total_attempts')).where((Nflpbp.passer!='NA') & (Nflpbp.passer_id!='None') 
-            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.passer_id,Nflpbp.passer).dicts()
+            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.passer_id,Nflpbp.passer,Nflpbp.posteam).dicts()
       table_name = PassStatsForSeason
     elif stats=='receiving':
       total_stats_query = Nflpbp.select(Nflpbp.season, Nflpbp.receiver_id, Nflpbp.receiver, Nflpbp.posteam, 
             fn.SUM(Nflpbp.yards_gained).alias('total_yards'), fn.Count(Nflpbp.receiver_id).alias('total_attempts')).where((Nflpbp.receiver!='NA') & (Nflpbp.receiver_id!='None') 
-            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.receiver_id, Nflpbp.receiver).dicts()
+            & ((Nflpbp.accepted_penalty==0) | ((Nflpbp.accepted_penalty==1) & (Nflpbp.posteam!=Nflpbp.penalizedteam)))).group_by(Nflpbp.season,Nflpbp.receiver_id, Nflpbp.receiver,Nflpbp.posteam).dicts()
       table_name = ReceiveStatsForSeason
 
 

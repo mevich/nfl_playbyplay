@@ -1,7 +1,10 @@
 import json
 from peewee import *
+import pymysql
 
-database = SqliteDatabase('nfl.db', **{})
+database = MySQLDatabase('nfl', user='root', password='root',
+                         host='127.0.0.1')
+# database = SQLiteDatabase('nfl.db')
 
 class UnknownField(object):
     def __init__(self, *_, **__): pass
@@ -113,7 +116,7 @@ class Nflpbp(BaseModel):
     yards_gained = IntegerField(column_name='Yards_Gained', null=True)
     airepa = TextField(column_name='airEPA', null=True)
     airwpa = TextField(column_name='airWPA', null=True)
-    desc = TextField(null=True)
+    description = TextField(null=True)
     down = TextField(null=True)
     game_time = TextField(null=True)
     posteam = TextField(null=True)
@@ -141,7 +144,7 @@ class Nflpbp(BaseModel):
         'posteam':self.posteam,
         'defensiveteam':self.defensiveteam,
         'playtype':self.playtype,
-        'desc':self.desc,
+        'description':self.description,
         'sideoffield':self.sideoffield,
         'yrdline100':self.yrdline100,
         'yards_gained':self.yards_gained,
