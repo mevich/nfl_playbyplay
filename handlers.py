@@ -15,76 +15,6 @@ from utils.helpers import *
 import hashlib
 from utils.config import *
 
-session_cookie_name = 'football_stats_sess'
-
-
-
-@app.before_request
-def before_request():
-    request.session = Session.get(request.cookies.get(session_cookie_name, ''))
-
-
-def create_session_table():
-    with database:
-        database.create_tables([SessionTable])
-
-class Session(object):
-    @classmethod
-    def create(cls, data):
-        session_id = uuid.uuid4().hex
-        SessionTable.create(session_id=session_id, body=json.dumps(data))
-        return session_id
-
-    @classmethod
-    def get(cls, session_id):
-        try:
-            session_row = SessionTable.get(SessionTable.session_id==session_id)
-            return session_row.data
-        except SessionTable.DoesNotExist:
-            return None
-
-    @classmethod
-    def update(cls, session_id, new_data):
-        curr_data = cls.get(session_id)
-        if not curr_data: return
-        curr_data.update(new_data)
-        upd_data = json.dumps(curr_data)
-        return SessionTable.update(body=upd_data).where(SessionTable.session_id==session_id).execute()
-
-    @classmethod
-    def delete(cls, session_id):
-        return SessionTable.delete().where(SessionTable.session_id==session_id).execute()
-
-
-@app.route('/')
-def get_home():
-    if request.session:
-        return "Hello Boss!"
-    else:
-        return render_template('login.html')
-
-    # When a session is created, 
- 
-@app.route('/login/', methods=['GET','POST'])
-def do_admin_login():
-    if request.form.get('password') == 'password' and request.form.get('username') == 'admin':
-        user_data = {"user_id": 1}
-        session_id = Session.create(user_data)
-        flash('Login Successful!')
-        response = make_response(redirect("/"))
-        response.set_cookie(session_cookie_name, value=session_id)
-        return response
-    else:
-        flash('wrong password!')
-        return render_template('login.html')
-
-@app.route('/logout/', methods=['GET','POST'])
-def do_logout():
-    response = make_response(render_template('logout.html'))
-    response.delete_cookie(session_cookie_name)
-    Session.delete(request.session)
-    return response
-
 
 @app.route('/register/', methods=['GET'])
 def get_register():
@@ -122,7 +52,7 @@ def post_register():
         return render_template('form.html', form=form)
 
 
-@app.route("/all-seasons/")
+@app.route("/")
 def get_all_seasons():
     query_object = Nflpbp.select(Nflpbp.season).distinct().dicts()
     all_data = [x for x in query_object]
@@ -144,7 +74,7 @@ def get_all_games_in_season(season):
 def get_index(season, game_id):
     query_object = Nflpbp.select(Nflpbp.season,Nflpbp.hometeam,Nflpbp.awayteam).distinct().where(Nflpbp.gameid==game_id).first()
     return render_template('playbyplay.html', hometeam = query_object.hometeam,
-        awayteam=query_object.awayteam, gameid=game_id, season=season)
+        awayteam=query_object.awayteam, gameid=game_id, season=season, gmaps_api=GMAPS_API)
 
 
 @app.route('/<season>/<game_id>/', methods=['GET'])

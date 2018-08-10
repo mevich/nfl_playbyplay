@@ -5,3 +5,7 @@ NFL_PlaybyPlay.csv
 .DS_Store
 config_local.py
 *sqlite3.py
+sessionLogin.py
+twitterapikeys.txt
+nflpbp_models_sqlite3.py
+db_insert_sqlite3.py

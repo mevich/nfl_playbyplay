@@ -39,15 +39,16 @@
     		top: 0px;
     		position: absolute;
 		}
-    #play_description {
+    /*#play_description {
       position: relative;
       top: 700px;
       text-align: center;
-    }
+    }*/
     #game_state{
       position: relative;
       text-align: center;
-      top: 475px;
+      top: 0px;
+      /*left: 450px;*/
     }
     
     .time_left {
@@ -76,7 +77,25 @@
     .button{
       position: absolute;
       top: 450px;
-      left: 50px;
+      left: 10px;
+    }
+
+    #mapframe{
+      position: absolute;
+      top: 700px;
+      left: 10px;
+    }
+
+     #hometeam{
+      position: absolute;
+      top: 700px;
+      left: 400px;
+    }
+
+    #awayteam{
+      position: absolute;
+      top: 700px;
+      left: 800px;
     }
 
     </style>
@@ -89,10 +108,10 @@
    		<img id="endzone_logo1" src="/static/images/teamlogos/{{hometeam}}.png" width="100" height="50" />
    		<img id="endzone_logo2" src="/static/images/teamlogos/{{awayteam}}.png" width="100" height="50" />
    		<div id="first_down_line"></div>
-      <div id="play_description"></div>
       <div id="loading" class="text-center">Loading..</div>
       <div id="gameover" class="text-center">GAMEOVER</div>
       <div><button class="button">Play</button></div>
+    </div>
       <div id="game_state">
         <p>qtr <span class="quarter_number"></span><span class="time_left"></span></p>
         <p><span class="current_down"></span> down and <span class="yards_to_go"></span> yards to go. Ball on <span class="side_of_field"></span> <span class="yard_line"></span></p>
@@ -104,11 +123,23 @@
           <span class="team2 h3"></span> 
           <img  class="team_logo" src="/static/images/teamlogos/{{awayteam}}.png">
         </p>
+        <div id="play_description"></div>
       </div>
+      <div id="mapframe">
+        <iframe src="" width="300" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>
+      </div>
+      <div id="hometeam">
+      </div>
+      <div id="awayteam">
+      </div>      
       <input type="hidden" id="game_data_url" value="/{{ season }}/{{ gameid }}">
-   	</div>
 {% endblock %}
 
 {% block js %}
+  <script type="text/javascript">
+    var homecode = '{{hometeam}}';
+    var awaycode = '{{awayteam}}';
+    var gmaps_api = '{{gmaps_api}}'
+  </script>
   <script src="/static/js/base.js"></script>
 {% endblock %}
