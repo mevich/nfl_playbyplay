@@ -51,7 +51,8 @@ def do_resize_image_longest(user_id):
 
 @celery_object.task()
 def get_all_seasons_redis(redis_key):
-    query_object = Nflpbp.select(Nflpbp.season).distinct().dicts()
-    all_seasons = [x for x in query_object]
+    query_object = Nflpbp.select(Nflpbp.season).distinct().tuples()
+    all_seasons = [x[0] for x in query_object]
+    all_seasons = {'seasons': all_seasons}
     redis_conn.setex(redis_key, json.dumps(all_seasons), 60*60)
     return

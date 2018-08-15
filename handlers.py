@@ -65,9 +65,6 @@ def get_all_seasons():
         celery_worker_job.wait()        
         if celery_worker_job.status == 'SUCCESS':
             return get_all_seasons()
-    # query_object = Nflpbp.select(Nflpbp.season).distinct().dicts()
-    # all_data = [x for x in query_object]
-    # return render_template('index.html', seasons=all_data)
 
 
 @app.route("/dropdown/", methods=['GET'])
