@@ -2,103 +2,7 @@
 
 
 {% block css %}
-    <style type="text/css">
-    	.footballfield {
-    		margin: 25px auto;
-    		width: 1200px;
-    		height: 450px;
-    		background: url('/static/images/footballfield.png');
-    		background-size: 1200px 450px;
-			  position: relative;
-			  margin-left: auto;
-			  margin-right: auto;
-			  left: 0;
-			  right: 0;
-    	}
-    	#football_pos {
-    		position: absolute;
-    		top: 215px;
-    		left: 437px;
-    	}
-    	#endzone_logo1 {
-    		position: absolute;
-    		top: 198px;
-    		left: 4px;
-    		transform: rotate(-90deg);
-    	}
-    	#endzone_logo2 {
-    		position: absolute;
-    		top: 200px;
-    		left: 1100px;
-    		transform: rotate(90deg);
-    	}
-    	#first_down_line {
-		    border-left: 4px solid yellow;
-		    height: 450px;
-		    left: 550px;
-    		top: 0px;
-    		position: absolute;
-		}
-    /*#play_description {
-      position: relative;
-      top: 700px;
-      text-align: center;
-    }*/
-    #game_state{
-      position: relative;
-      text-align: center;
-      top: 0px;
-      /*left: 450px;*/
-    }
-    
-    .time_left {
-      margin-left: 20px;
-    }
-    #loading {
-      position: relative;
-      top: 200px;
-      font-size: 4em;
-      color: white;
-    }
-    #gameover {
-      position: relative;
-      top: 175px;
-      font-size: 4em;
-      color: white;
-    }
-    .team_logo {
-      width: 30px;
-      height: 30px;
-    }
-    .team1, .team2 {
-      margin: 0px 10px;
-    }
-
-    .button{
-      position: absolute;
-      top: 450px;
-      left: 10px;
-    }
-
-    #mapframe{
-      position: absolute;
-      top: 700px;
-      left: 10px;
-    }
-
-     #hometeam{
-      position: absolute;
-      top: 700px;
-      left: 400px;
-    }
-
-    #awayteam{
-      position: absolute;
-      top: 700px;
-      left: 800px;
-    }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="/static/css/nflpbp.css">
 {% endblock %}
 
 
@@ -110,8 +14,8 @@
    		<div id="first_down_line"></div>
       <div id="loading" class="text-center">Loading..</div>
       <div id="gameover" class="text-center">GAMEOVER</div>
-      <div><button class="button">Play</button></div>
     </div>
+    <div><button class="btn btn-primary btn-lg">Play</button></div>
       <div id="game_state">
         <p>qtr <span class="quarter_number"></span><span class="time_left"></span></p>
         <p><span class="current_down"></span> down and <span class="yards_to_go"></span> yards to go. Ball on <span class="side_of_field"></span> <span class="yard_line"></span></p>
@@ -126,6 +30,7 @@
         <div id="play_description"></div>
       </div>
       <div id="mapframe">
+        <p></p>
         <iframe src="" width="300" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>
       </div>
       <div id="hometeam">
@@ -137,9 +42,12 @@
 
 {% block js %}
   <script type="text/javascript">
+    $("#gameover").hide();
+
     var homecode = '{{hometeam}}';
     var awaycode = '{{awayteam}}';
-    var gmaps_api = '{{gmaps_api}}'
+    var gmaps_api = '{{gmaps_api}}';
+    var game_date = '{{game_date}}';
   </script>
   <script src="/static/js/base.js"></script>
 {% endblock %}

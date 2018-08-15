@@ -3,17 +3,82 @@
 <head>
 	<meta charset="utf-8">
 	<title>{% block title %} {% endblock %}</title>
-	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+  	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/base.css">
 	{% block css %}
 	{% endblock %}
 </head>
 <body>
-	<div class="container">
-	{% block content %}{% endblock %}
-	</div>
+	<header>
+		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+	        <a class="navbar-brand" href="/">NFL Stats</a>
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+	          <span class="navbar-toggler-icon"></span>
+	        </button>
+	        <div class="collapse navbar-collapse" id="navbarCollapse">
+	          <ul class="navbar-nav mr-auto">
+	            <li class="nav-item active">
+	              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+	            </li>
+	            <li class="nav-item dropdown">
+		        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		          Seasons
+		        </a>
+		        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+		          	<a class="dropdown-item" href="">Loading...</a>
+		        </div>
+		      </li>
+	          </ul>
+	          <form class="form-inline mt-2 mt-md-0">
+	            <input class="form-control mr-sm-2" type="text" placeholder="Player Search" aria-label="Search">
+	            <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+	          </form>
+	        </div>
+	    </nav>
+  	</header>
+
+    <main role="main">
+		<div class="container">
+			{% block content %}{% endblock %}
+		</div>
+	</main>
 </body>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script type="text/javascript">
+	$.get("{{ url_for('get_all_seasons_dropdown') }}", function(data){
+		var dropdown_item = $(".dropdown-item").remove().clone();
+		$.each(data.seasons, function(i,v){
+			dropdown_item.clone().attr("href", "/"+v).html(v).appendTo('.dropdown-menu');
+		})
+	})	
+	$('.form-control').focus(function(){
+		$(this).autocomplete({ 
+            source: function(request, response) {
+                $.ajax({
+                    url: "{{ url_for('get_autocomplete') }}",
+                    data: {
+                        term: request.term
+                    },
+                    success: function(data) {
+                    response(data);
+                    }
+                });
+            },
+                minLength: 2,
+                select: function(event, ui) {
+                    var player_name = ui.item.value;
+                    window.location = "{{ url_for('get_player_data') }}" + '?q=' + player_name;
+                }
+            });
+	})
+</script>
 {% block js %}
 {% endblock %}
 </html>

@@ -7,9 +7,9 @@ NFL Seasons for Stats and Play by Play
 {% block content %}
 <h2>NFL Season for Stats and Play by Play Game Data</h2>
 	<ul>
-		{% for season in seasons %}
-		<li><a href="/{{ season['season'] }}">{{ season["season"] }}</a></li>
+		{% for season in seasons.seasons %}
+		<li><a href="/{{ season }}">{{ season }}</a></li>
 		{% endfor %}
-		<li><a href="/players/autocomplete/search/">Search for Player</a></li>
+		<!-- <li><a href="/players/autocomplete/search/">Search for Player</a></li> -->
 	</ul>
 {% endblock %}

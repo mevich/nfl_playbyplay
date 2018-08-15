@@ -14,6 +14,7 @@ from forms import RegisterForm
 from utils.helpers import *
 import hashlib
 from utils.config import *
+from datetime import datetime
 
 
 @app.route('/register/', methods=['GET'])
@@ -54,9 +55,32 @@ def post_register():
 
 @app.route("/")
 def get_all_seasons():
-    query_object = Nflpbp.select(Nflpbp.season).distinct().dicts()
-    all_data = [x for x in query_object]
-    return render_template('index.html', seasons=all_data)
+    redis_key = "seasons"
+    data = redis_conn.get(redis_key)
+    if data:
+        print json.loads(data)
+        return render_template('index.html', seasons=json.loads(data))
+    else:
+        celery_worker_job = get_all_seasons_redis.delay(redis_key)
+        celery_worker_job.wait()        
+        if celery_worker_job.status == 'SUCCESS':
+            return get_all_seasons()
+    # query_object = Nflpbp.select(Nflpbp.season).distinct().dicts()
+    # all_data = [x for x in query_object]
+    # return render_template('index.html', seasons=all_data)
+
+
+@app.route("/dropdown/", methods=['GET'])
+def get_all_seasons_dropdown():
+    redis_key = "seasons"
+    data = redis_conn.get(redis_key)
+    if data:
+        return jsonify(json.loads(data))
+    else:
+        celery_worker_job = get_all_seasons_redis.delay(redis_key)
+        celery_worker_job.wait()        
+        if celery_worker_job.status == 'SUCCESS':
+            return get_all_seasons_dropdown()
 
 @app.route("/<int:season>/")
 def get_season_data(season):
@@ -72,9 +96,11 @@ def get_all_games_in_season(season):
 
 @app.route('/<season>/<game_id>/playbyplay/')
 def get_index(season, game_id):
-    query_object = Nflpbp.select(Nflpbp.season,Nflpbp.hometeam,Nflpbp.awayteam).distinct().where(Nflpbp.gameid==game_id).first()
+    query_object = Nflpbp.select(Nflpbp.season,Nflpbp.game_date, Nflpbp.hometeam,Nflpbp.awayteam).distinct().where(Nflpbp.gameid==game_id).first()
+    # game_date = datetime.strptime(str(query_object.game_date), '%Y-%m-%d').strftime('%b %d %Y')
+    game_date = (query_object.game_date).strftime('%b %d %Y')
     return render_template('playbyplay.html', hometeam = query_object.hometeam,
-        awayteam=query_object.awayteam, gameid=game_id, season=season, gmaps_api=GMAPS_API)
+        awayteam=query_object.awayteam, gameid=game_id, game_date=game_date, season=season, gmaps_api=GMAPS_API)
 
 
 @app.route('/<season>/<game_id>/', methods=['GET'])
@@ -185,8 +211,8 @@ def get_autocomplete_form():
 @app.route('/players/autocomplete/', methods=['GET'])
 def get_autocomplete():
     search_by = request.args.get("term", '')
-    rushers = PlayerStatsForSeason.select(PlayerStatsForSeason.player_name).distinct().where(PlayerStatsForSeason.player_name.contains('%' + search_by)).tuples()
-    names = [x[0] for x in rushers]
+    players = PlayerStatsForSeason.select(PlayerStatsForSeason.player_name).distinct().where(PlayerStatsForSeason.player_name.contains('%' + search_by)).tuples()
+    names = [x[0] for x in players]
     return jsonify(names)
 
 @app.route('/players/autocomplete/data/', methods=['GET'])
@@ -201,8 +227,9 @@ def get_autocomplete_charts():
     all_stats_for_player = get_player_data(player_name)
     return render_template('player_charts.html', name=player_name, player_stats=all_stats_for_player)
 
-
-def get_player_data(player_name):
+@app.route('/players', methods=['GET'])
+def get_player_data():
+    player_name = request.args.get('q', '')
     stats_for_season_obj = PlayerStatsForSeason.select(PlayerStatsForSeason.stats_for_season, PlayerStatsForSeason.stat_type, PlayerStatsForSeason.season).distinct().where(PlayerStatsForSeason.player_name==player_name).tuples()
     # stats_for_season_data = [literal_eval(x[0]) for x in stats_for_season_obj]
     all_stats_for_player=[]
@@ -226,4 +253,5 @@ def get_player_data(player_name):
             all_stats_for_player.append(all_stats_for_season)
             all_stats_for_player.sort(key=lambda k:k['season'])
 
-    return all_stats_for_player
+    return render_template('player_page.html', name=player_name, player_stats=all_stats_for_player)
+    # return all_stats_for_player

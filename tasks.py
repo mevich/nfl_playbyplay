@@ -48,3 +48,10 @@ def do_resize_image_longest(user_id):
     image_name = (RegisteredUsers.select(RegisteredUsers.image_name).where(RegisteredUsers.id==user_id).first()).image_name
     resize_image_longest_edge(image_name,1000)
     return
+
+@celery_object.task()
+def get_all_seasons_redis(redis_key):
+    query_object = Nflpbp.select(Nflpbp.season).distinct().dicts()
+    all_seasons = [x for x in query_object]
+    redis_conn.setex(redis_key, json.dumps(all_seasons), 60*60)
+    return

@@ -10,14 +10,10 @@ $(document).ready(function(){
 		var calc_left =  firstdown_line(play_data.awayteam,play_data.posteam, play_data.yrdline100, play_data.ydstogo);
 		$("#first_down_line").css({left: calc_left});
 		
-		// $(".quarter_number").text('Qtr') 654
 		$(".quarter_number").html(play_data.qtr);
 		$(".time_left").html(play_data.game_time);
-		// $(".current_down").text('Down and')
 		$(".current_down").html(play_data.down);
-		// $(".yards_to_go").text('Yards to go.')
 		$(".yards_to_go").html(play_data.ydstogo);
-		// $(".team1").text('Ball on')
 		$(".team1").html(play_data.hometeam);
 		if (play_data.posteam == play_data.hometeam) {
 			$(".team1_score").html(play_data.posteamscore);
@@ -82,10 +78,10 @@ $(document).ready(function(){
     	} 
     	else {
     		current_play_index += 1;
-    		if ($('.button').text()=='Pause'){
+    		if ($('.btn').text()=='Pause'){
     				playSetTimeout = setTimeout(perform_next_play, play_timeout);
     			}
-    			else if ($('.button').text()=='Play'){
+    			else if ($('.btn').text()=='Play'){
     				clearTimeout(playSetTimeout);
     			}
     	}
@@ -95,6 +91,7 @@ $(document).ready(function(){
 		var hometeam = data[homecode];
 		var awayteam = data[awaycode];
 
+		$('#mapframe p').text('Played at ' + hometeam[1] + ' on ' + game_date)
 		var map_url = "https://www.google.com/maps/embed/v1/search?key=" + gmaps_api + "&q=" + hometeam[1];
 		$('iframe').attr('src', map_url);
 
@@ -105,8 +102,6 @@ $(document).ready(function(){
 		$('#awayteam').append('<a class="twitter-timeline" href="' + away_twitter_url + '" data-width="300" data-height="300"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>')
 	})
 
-
-	$("#gameover").hide();
 	var url = $("#game_data_url").val();
 	$.get(url, function(data){
 	  $("#loading").hide();
@@ -121,7 +116,7 @@ $(document).ready(function(){
 
 	  	all_quarters_data = data;
 	  	current_quarter = 1;
-	  	$(".button").click(function(){
+	  	$(".btn").click(function(){
 	  		console.log($(this).text())
 	  		if ($(this).text() == 'Play'){
 	  			$(this).text('Pause');

@@ -1,0 +1,96 @@
+.footballfield {
+        margin: 25px auto;
+        width: 1200px;
+        height: 450px;
+        background: url('/static/images/footballfield.png');
+        background-size: 1200px 450px;
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+      }
+      #football_pos {
+        position: absolute;
+        top: 215px;
+        left: 437px;
+      }
+      #endzone_logo1 {
+        position: absolute;
+        top: 198px;
+        left: 4px;
+        transform: rotate(-90deg);
+      }
+      #endzone_logo2 {
+        position: absolute;
+        top: 200px;
+        left: 1100px;
+        transform: rotate(90deg);
+      }
+      #first_down_line {
+        border-left: 4px solid yellow;
+        height: 450px;
+        left: 550px;
+        top: 0px;
+        position: absolute;
+    }
+    /*#play_description {
+      position: relative;
+      top: 700px;
+      text-align: center;
+    }*/
+    #game_state{
+      position: relative;
+      text-align: center;
+      height: 200px;
+      width: 500px;
+      top: 50px;
+      left: 365px;
+    }
+    
+    .time_left {
+      margin-left: 20px;
+    }
+    #loading {
+      position: relative;
+      top: 175px;
+      font-size: 4em;
+      color: white;
+    }
+    #gameover {
+      position: relative;
+      top: 175px;
+      font-size: 4em;
+      color: white;
+    }
+    .team_logo {
+      width: 30px;
+      height: 30px;
+    }
+    .team1, .team2 {
+      margin: 0px 10px;
+    }
+
+    .btn{
+      position: absolute;
+      top: 575px;
+      left: 675px;
+    }
+
+    #mapframe{
+      position: absolute;
+      top: 600px;
+      left: 25px;
+    }
+
+     #hometeam{
+      position: absolute;
+      top: 830px;
+      left: 400px;
+    }
+
+    #awayteam{
+      position: absolute;
+      top: 830px;
+      left: 800px;
+    }
