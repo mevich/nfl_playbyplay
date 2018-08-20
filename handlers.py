@@ -15,6 +15,9 @@ from utils.helpers import *
 import hashlib
 from utils.config import *
 from datetime import datetime
+from datetime import timedelta
+from collections import Counter
+import numpy as np
 
 
 @app.route('/register/', methods=['GET'])
@@ -89,7 +92,38 @@ def get_all_games_in_season(season):
     query_object = Nflpbp.select(Nflpbp.gameid,Nflpbp.season,Nflpbp.game_date,
         Nflpbp.hometeam,Nflpbp.awayteam).distinct().where(Nflpbp.season==season).dicts()
     all_games = [x for x in query_object]
-    return render_template('all_games_season.html', all_games=all_games, season=season)
+    sorted(all_games, key=lambda k: k['game_date'])
+
+    date_count = Counter([x['game_date'] for x in all_games])
+    week_date = [k for k,v in date_count.iteritems() if v>3]
+    week_date.sort()
+    dates = [k for k,v in date_count.iteritems()]
+    dates.sort()
+    weekly = [x.setdefault('week', (week_date.index(y) + 1)) 
+        for x in all_games for y in week_date 
+            if x['game_date'] in [y, y+timedelta(days=2), y+timedelta(days=1), y-timedelta(days=1), y-timedelta(days=3), y-timedelta(days=4)]]
+    weeks = [n for n in np.unique(weekly)]
+
+    all_weeks = []
+    for w in weeks:
+        week = {}
+        week['week'] = w
+        game_data = []
+        week['game_data'] = game_data
+        for d in week_date:
+            for date in dates:
+                if w == (week_date.index(d) + 1) and date in [d, d+timedelta(days=2), d+timedelta(days=1), d-timedelta(days=1), d-timedelta(days=3), d-timedelta(days=4)]:
+                    game_dict = {}
+                    game_dict['game_date'] = date.strftime('%A %b %d %Y')
+                    games = []
+                    game_dict['games'] = games
+                    [games.append(game) for game in all_games if game['game_date'] == date and game['week'] == w]
+
+                    game_data.append(game_dict)
+
+        all_weeks.append(week)
+
+    return render_template('all_games_season.html', all_games=all_weeks, season=season)
 
 @app.route('/<season>/<game_id>/playbyplay/')
 def get_index(season, game_id):

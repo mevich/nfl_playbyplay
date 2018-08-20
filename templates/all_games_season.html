@@ -7,8 +7,16 @@ NFL game for Season {{ season }}
 {% block content %}
 	<h2>Season: {{ season }}</h2>
 	<ul>
-		{% for game in all_games %}
-		<li><a href="/{{ game.season }}/{{ game.gameid }}/playbyplay">{{ game.hometeam }} v {{ game.awayteam }}</a></li>
-		{% endfor %}
+	{% for week in all_games %}
+		<li><h4>Week {{week.week}}</h4></li>
+			{% for games in week.game_data %}
+				<ul>
+					<h5>{{games.game_date}}</h5>
+					{% for game in games.games %}
+						<ul><a href="/{{ game.season }}/{{ game.gameid }}/playbyplay">{{ game.hometeam }} v {{ game.awayteam }}</a></ul>
+					{% endfor %}
+				</ul>
+			{% endfor %}
+	{% endfor %}
 	</ul>
 {% endblock %}
